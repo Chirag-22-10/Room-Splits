@@ -34,9 +34,9 @@ A Splitwise-style expense-sharing app built with **Kotlin Multiplatform** and **
 Room-Splits/
 ├── composeApp/           # Compose UI shared across platforms
 │   ├── commonMain/       # shared Compose code
-│   ├── androidMain/
 │   ├── iosMain/
 │   └── wasmJsMain/
+├── androidApp/           # Android application wrapper
 ├── shared/               # KMP shared business + data
 │   ├── commonMain/
 │   │   ├── domain/       # entities + use cases
@@ -69,15 +69,27 @@ See [docs/ROADMAP.md](docs/ROADMAP.md) for the full breakdown.
 
 ## 🚀 Getting Started
 
-> Scaffolding is tracked in [#1](../../issues/1). This section fills in once Phase 1 lands.
+**Prerequisites:** JDK 17, Android Studio with Android SDK 37, Xcode (for iOS). Gradle and Node.js are downloaded automatically.
 
-```bash
-# Prereqs: JDK 17+, Android Studio (Koala+), Xcode 15+ (for iOS), Node 20+ (for Web)
-./gradlew :composeApp:assembleDebug           # Android
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun  # Web
-# iOS: open iosApp/iosApp.xcodeproj in Xcode
-./gradlew :server:run                          # Backend
-```
+| Target | Command |
+|---|---|
+| Android | `./gradlew :androidApp:installDebug` (or run `androidApp` from Android Studio) |
+| iOS | Open `iosApp/iosApp.xcodeproj` in Xcode, pick a simulator, press Run. For a device, set your Team under Signing & Capabilities. |
+| Web | `./gradlew :composeApp:wasmJsBrowserDevelopmentRun`, which opens the app in your browser |
+| Server | `./gradlew :server:run`, then open http://localhost:8080/health |
+| Tests | `./gradlew :shared:jvmTest :shared:wasmJsTest :server:test` |
+
+### Modules
+
+| Module | What it is |
+|---|---|
+| `shared` | Kotlin Multiplatform logic used by every app and the server (Android, iOS, Web, JVM) |
+| `composeApp` | Shared Compose UI; produces the iOS framework and the Web app |
+| `androidApp` | Thin Android application wrapper around `composeApp` |
+| `iosApp` | Xcode project that embeds the `ComposeApp` framework |
+| `server` | Ktor backend |
+
+`androidApp` is a separate module because Android Gradle Plugin 9 doesn't allow the Android application plugin in a Kotlin Multiplatform module.
 
 ## 🤝 Contributing
 
